@@ -6,7 +6,8 @@ Scripts for trytripslip.com (Webflow). One file per page: `dist/tripslip.js`.
 |---|---|---|
 | `src/motion.css` + `src/motion.js` | Motion tokens and patterns M1–M8, entrance observer, toast hold (`window.tsToast(el)`) | `motion-specs.md` v2.1 (design-system repo, `brand/docs/`) |
 | `src/hero-pile.js` | Character pile: drop-in once per session, idle wiggle every 12–18s, pauses off-screen and when the tab is hidden, static under reduced motion | `expressive-layer.md` §7/7a |
-| `src/utm-capture.js` | Fills hidden `source-page` and `utm-*` form fields; first touch in the session wins | `zoho-funnel-plan` §2 |
+| `src/utm-capture.js` | Adds (on `form[data-ts-utm]`) and fills hidden `source-page` and `utm-*` fields; first touch in the session wins | `zoho-funnel-plan` §2 |
+| `src/role-prefill.js` | On `form[data-ts-role-prefill]`, pre-selects the `role` radio from `?role=` (`admin` → `school-admin`) | `section-prompts` C1 |
 
 Nothing here collects personal data, sets cookies or talks to third parties. This repo is public (jsDelivr only serves public repos): never commit keys, tokens or student data.
 

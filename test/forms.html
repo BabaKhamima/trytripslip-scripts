@@ -1,0 +1,9 @@
+<!doctype html><meta charset="utf-8"><title>forms test</title>
+<form data-ts-utm data-ts-role-prefill name="t">
+<label><input type="radio" name="role" value="school-admin">School admin</label>
+<label><input type="radio" name="role" value="parent">Parent</label>
+<input name="email">
+</form>
+<pre id="out"></pre>
+<script src="../dist/tripslip.js"></script>
+<script>addEventListener('load',function(){var f=document.forms.t;var o={checked:(f.querySelector('input[name=role]:checked')||{}).value||null};['source-page','utm-source','utm-medium','utm-campaign','utm-content'].forEach(function(n){var i=f.querySelector('input[name="'+n+'"]');o[n]=i?[i.type,i.value]:null});document.getElementById('out').textContent=JSON.stringify(o);});</script>
