@@ -60,6 +60,8 @@
 
 /* W3 hide-and-seek: set up by egg.js. Base box/tile/face sizes live in Webflow classes (ts-egg, ts-egg-tile, ts-egg-face). */
 .ts-egg{appearance:none;-webkit-appearance:none;cursor:pointer}
+.ts-js .ts-egg:not(.is-active){display:none!important}
+.ts-egg-tile.is-mint{background-color:#CDEFD7}
 .ts-egg .ts-egg-tile{transition:transform 560ms cubic-bezier(.34,1.56,.64,1)}
 .ts-js .ts-egg.is-pre .ts-egg-tile{transform:translateY(110%)}
 .ts-egg.is-wiggle .ts-egg-tile{animation:ts-egg-wiggle 7s ease-in-out var(--egg-delay,2s) infinite}

@@ -44,4 +44,4 @@ Always pin a tag. Never point Webflow at `@main`.
 - Always respect `prefers-reduced-motion`.
 - Content is readable with JS off: hidden states only apply under `html.ts-js`.
 
-| egg.js | W3 hide-and-seek: `.ts-egg[data-egg]` buttons pop up from behind cards and wiggle until the first find, then never move again. Counter pill appears after the first find; toast on each find. Progress in localStorage only (`ts-eggs-v1`). |
+| egg.js | Daily hide-and-seek: 26 spots (`.ts-egg[data-spot=A–Z]`); each midnight (America/Detroit) a date-seeded shuffle picks 10, max 2 per page, and assigns the day's characters. Faces pop up and wiggle until the day's first find, then hold still. Progress in localStorage (`ts-eggs-v2`), resets daily. QA: `TSEggs.plan('YYYY-MM-DD')`. Pool lives in `POOL` — add a page's spots there when it publishes. |
