@@ -22,14 +22,15 @@
 .ts-js .ts-fade{opacity:0;transition:opacity var(--motion-fade) var(--ease-fade)}
 .ts-js .ts-fade.is-in{opacity:1}
 
-/* M3 move: list items rise, screens slide. Start at .6 so text is never invisible. */
-.ts-js .ts-section .ts-item,.ts-js .ts-rise{opacity:.6;transform:translateY(var(--motion-rise-y))}
-.ts-js .ts-slide{opacity:.6;transform:translateX(var(--motion-slide-x))}
-.ts-js .ts-slide.is-back{transform:translateX(calc(var(--motion-slide-x)*-1))}
+/* M3 move: list items rise, screens slide. Start at .6 so text is never invisible.
+   Uses the individual `translate` property so it composes with any rotate/transform a card already has (fanned cards, postcards). */
+.ts-js .ts-section .ts-item,.ts-js .ts-rise{opacity:.6;translate:0 var(--motion-rise-y)}
+.ts-js .ts-slide{opacity:.6;translate:var(--motion-slide-x) 0}
+.ts-js .ts-slide.is-back{translate:calc(var(--motion-slide-x)*-1) 0}
 .ts-js .ts-section .ts-item,.ts-js .ts-rise,.ts-js .ts-slide{
-  transition:opacity var(--motion-move) var(--ease-move),transform var(--motion-move) var(--ease-move),box-shadow var(--motion-move) var(--ease-move);
+  transition:opacity var(--motion-move) var(--ease-move),translate var(--motion-move) var(--ease-move),transform var(--motion-move) var(--ease-move),box-shadow var(--motion-move) var(--ease-move);
   transition-delay:calc(var(--motion-stagger)*var(--i,0))}
-.ts-js .ts-section .ts-item.is-in,.ts-js .ts-rise.is-in,.ts-js .ts-slide.is-in{opacity:1;transform:none}
+.ts-js .ts-section .ts-item.is-in,.ts-js .ts-rise.is-in,.ts-js .ts-slide.is-in{opacity:1;translate:none}
 /* keep the existing sticker hover lift working after entrance */
 .ts-js .ts-section .ts-item.is-in:hover{transform:translate(-2px,-2px);transition-delay:0s}
 
@@ -73,7 +74,9 @@
 /* Reduced motion (spec §0.4, WCAG 2.3.3) */
 @media (prefers-reduced-motion: reduce){
   *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;scroll-behavior:auto!important}
-  .ts-js .ts-section .ts-item,.ts-js .ts-rise,.ts-js .ts-slide,.ts-sheet,.ts-toast{transform:none!important;transition:opacity var(--motion-fade) var(--ease-fade)!important}
+  .ts-js .ts-section .ts-item,.ts-js .ts-rise,.ts-js .ts-slide{translate:none!important}
+  .ts-sheet,.ts-toast{transform:none!important}
+  .ts-js .ts-section .ts-item,.ts-js .ts-rise,.ts-js .ts-slide,.ts-sheet,.ts-toast{transition:opacity var(--motion-fade) var(--ease-fade)!important}
   .ts-js .ts-section .ts-item,.ts-js .ts-rise,.ts-js .ts-slide{opacity:1!important}
   .ts-skeleton::after{animation:none!important}
   .ts-sheet{opacity:0}.ts-sheet.is-open{opacity:1}

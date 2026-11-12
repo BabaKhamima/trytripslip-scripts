@@ -1,0 +1,9 @@
+<!doctype html><html><head><meta charset="utf-8"><title>motion test</title>
+<style>body{font:16px system-ui;margin:0}.sp{height:900px;background:#eee}.fan{display:flex;gap:16px;padding:40px}
+.ts-step-card{width:180px;height:220px;background:#FCC551;border:2px solid #000}.r1{transform:rotate(-4deg)}.r2{transform:rotate(3deg)}
+.ts-ui{background:#fff;height:60px;margin:10px}</style></head><body>
+<section class="ts-hero"><div class="ts-step-card" id="heroCard">hero card (must NOT hook)</div></section>
+<div class="sp"></div>
+<section><ul class="fan"><li class="ts-step-card r1" id="c1"><div class="ts-ui" id="nested">nested rep</div></li><li class="ts-step-card r2" id="c2">two</li></ul>
+<div class="ts-ui" id="solo">solo rep</div></section>
+<script src="../dist/tripslip.js"></script></body></html>
