@@ -1,0 +1,30 @@
+/* Component rules Webflow classes can't express (descendant/state selectors). Values match the DS tokens. */
+
+/* E5 split button: arrow cell slides 4px on hover/focus; primary darkens, outline arrow fills yellow */
+.ts-split .ts-split-label,.ts-split .ts-split-arrow{transition:transform var(--motion-move,280ms) var(--ease-move,cubic-bezier(.2,.8,.2,1)),background-color var(--motion-fade,200ms) var(--ease-fade,ease-out)}
+.ts-split:hover .ts-split-arrow,.ts-split:focus-visible .ts-split-arrow{transform:translateX(4px)}
+.ts-split:hover .ts-split-label:not(.is-outline),.ts-split:hover .ts-split-arrow:not(.is-outline){background-color:#0052D6}
+.ts-split:hover .ts-split-arrow.is-outline,.ts-split:focus-visible .ts-split-arrow.is-outline{background-color:#FCC551}
+.ts-split:focus-visible{outline:none}
+.ts-split:focus-visible .ts-split-label{outline:2px solid #0364FF;outline-offset:2px}
+
+/* E2 step cards: hover straightens, lifts, comes to front */
+.ts-step-card{transition:transform var(--motion-move,280ms) var(--ease-move,cubic-bezier(.2,.8,.2,1)),box-shadow var(--motion-move,280ms) var(--ease-move,cubic-bezier(.2,.8,.2,1))}
+.ts-step-card:hover,.ts-step-card:focus-within{transform:translate(-2px,-2px) rotate(0deg)!important;box-shadow:4px 4px 0 0 #0A0A0A;z-index:5}
+
+/* E4 audience card: lift + sticker border, arrow fills ink */
+.ts-aud-card{transition:transform var(--motion-move,280ms) var(--ease-move,cubic-bezier(.2,.8,.2,1)),box-shadow var(--motion-move,280ms) var(--ease-move,cubic-bezier(.2,.8,.2,1))}
+.ts-aud-card:hover,.ts-aud-card:focus-visible{transform:translate(-2px,-2px);box-shadow:4px 4px 0 0 #0A0A0A,inset 0 0 0 2px #0A0A0A}
+.ts-aud-card:hover .ts-aud-arrow,.ts-aud-card:focus-visible .ts-aud-arrow{background-color:#0A0A0A;color:#fff}
+
+/* S1 ruled rows: crop tilts, rule thickens */
+.ts-row{transition:box-shadow var(--motion-move,280ms) var(--ease-move,cubic-bezier(.2,.8,.2,1))}
+.ts-row .ts-row-crop{transition:transform var(--motion-move,280ms) var(--ease-move,cubic-bezier(.2,.8,.2,1))}
+.ts-row:hover{box-shadow:inset 0 3px 0 0 #0A0A0A}
+.ts-row:hover .ts-row-crop{transform:rotate(-3deg)}
+
+@media (prefers-reduced-motion: reduce){
+  .ts-split:hover .ts-split-arrow,.ts-split:focus-visible .ts-split-arrow{transform:none}
+  .ts-step-card:hover,.ts-step-card:focus-within,.ts-aud-card:hover,.ts-aud-card:focus-visible{transform:none!important}
+  .ts-row:hover .ts-row-crop{transform:none}
+}
