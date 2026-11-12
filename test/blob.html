@@ -1,0 +1,10 @@
+<!doctype html><meta charset="utf-8"><title>blob test</title>
+<style>section{position:relative;height:110vh;border-bottom:1px solid #ccc}img{position:absolute;width:200px}</style>
+<section id="a"><img id="b1" src="ts-blob-test.svg" style="top:20px;left:20px;transform:rotate(12deg)"><img id="b2" src="ts-blob-test.svg" style="top:20px;left:260px"></section>
+<section id="b"><img id="b3" src="ts-blob-test.svg" style="top:20px;left:20px;opacity:.9"></section>
+<pre id="out" style="position:fixed;bottom:0;background:#fff"></pre>
+<script src="../dist/tripslip.js"></script>
+<script>
+function st(){return ['b1','b2','b3'].map(function(i){var e=document.getElementById(i),c=getComputedStyle(e);return i+':'+e.className+'|op='+c.opacity+'|scale='+c.scale}).join('\n')}
+setTimeout(function(){document.getElementById('out').textContent='t1:\n'+st();window.scrollTo(0,document.body.scrollHeight);setTimeout(function(){document.getElementById('out').textContent+='\nt2:\n'+st()},1200)},900);
+</script>

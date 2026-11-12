@@ -34,6 +34,10 @@
 .ts-submit:hover{background-color:#0052D6}
 .ts-submit:focus-visible{outline:2px solid #0364FF;outline-offset:3px}
 
+/* Blob-in (mkt-motion-blob-in): set up by blob-in.js, only ever applied when motion is allowed */
+.ts-blob-pre{opacity:0!important;scale:.85}
+.ts-blob-anim{transition:opacity 480ms cubic-bezier(.2,.8,.2,1),scale 480ms cubic-bezier(.2,.8,.2,1)}
+
 /* C3 pricing: check marks on plan lists */
 .ts-price-item::before{content:"";position:absolute;left:.125rem;top:.4em;width:.8rem;height:.45rem;border-left:2px solid #0A0A0A;border-bottom:2px solid #0A0A0A;transform:rotate(-45deg)}
 
