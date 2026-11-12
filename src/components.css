@@ -23,6 +23,17 @@
 .ts-row:hover{box-shadow:inset 0 3px 0 0 #0A0A0A}
 .ts-row:hover .ts-row-crop{transform:rotate(-3deg)}
 
+/* C2 form: chip radios (selected = Blue 50 fill + Blue 500 ring + check), visible focus, input focus/invalid */
+.ts-chip-text{transition:background-color var(--motion-fade,200ms) var(--ease-fade,ease-out),border-color var(--motion-fade,200ms) var(--ease-fade,ease-out)}
+.ts-chip:hover .ts-chip-text{background-color:#F4F1EA}
+.ts-chip-input:checked+.ts-chip-text{background-color:#E8F0FF;border-color:#0364FF;color:#0052D6}
+.ts-chip-input:checked+.ts-chip-text::before{content:"\2713";margin-right:.4em;font-weight:700}
+.ts-chip-input:focus-visible+.ts-chip-text{outline:2px solid #0364FF;outline-offset:2px}
+.ts-input:focus{outline:none;border-color:#0364FF;box-shadow:0 0 0 3px rgba(3,100,255,.18)}
+.ts-input:user-invalid{border-color:#B42318}
+.ts-submit:hover{background-color:#0052D6}
+.ts-submit:focus-visible{outline:2px solid #0364FF;outline-offset:3px}
+
 @media (prefers-reduced-motion: reduce){
   .ts-split:hover .ts-split-arrow,.ts-split:focus-visible .ts-split-arrow{transform:none}
   .ts-step-card:hover,.ts-step-card:focus-within,.ts-aud-card:hover,.ts-aud-card:focus-visible{transform:none!important}

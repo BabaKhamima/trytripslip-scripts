@@ -21,7 +21,20 @@
   var utm = stored || (hasAny ? fromUrl : null);
   if (!stored && hasAny) write(fromUrl);
 
+  // Webflow has no native hidden field: forms marked data-ts-utm get the five hidden inputs added here.
+  function ensureHidden() {
+    [].forEach.call(document.querySelectorAll('form[data-ts-utm]'), function (f) {
+      ['source-page', 'utm-source', 'utm-medium', 'utm-campaign', 'utm-content'].forEach(function (n) {
+        if (f.querySelector('input[name="' + n + '"]')) return;
+        var i = document.createElement('input');
+        i.type = 'hidden'; i.name = n;
+        f.appendChild(i);
+      });
+    });
+  }
+
   function fill() {
+    ensureHidden();
     var set = function (name, value) {
       [].forEach.call(document.querySelectorAll('input[name="' + name + '"]'), function (i) {
         if (!i.value) i.value = value || '';
