@@ -1,0 +1,81 @@
+
+:root{
+  --motion-press:120ms;--ease-press:ease;
+  --motion-fade:200ms;--ease-fade:ease-out;
+  --motion-move:280ms;--ease-move:cubic-bezier(0.2,0.8,0.2,1);
+  --motion-sheet-in:300ms;
+  --motion-exit:220ms;--ease-exit:cubic-bezier(0.4,0,1,1);
+  --motion-skeleton:1200ms;--ease-skeleton:linear;
+  --motion-toast:2800ms;--motion-toast-enter:300ms;--motion-toast-exit:300ms;
+  --motion-stagger:50ms;--motion-press-scale:0.97;--motion-backdrop-opacity:0.42;
+  --motion-bob:5px;--motion-slide-x:24px;--motion-rise-y:8px;--motion-wave-angle:20deg;
+}
+/* Focus ring (spec §4) */
+:where(a,button,input,select,textarea,summary,[tabindex]):focus-visible{outline:2px solid #0364FF;outline-offset:2px}
+
+/* M1 press */
+.ts-btn,.ts-press{transition:background-color var(--motion-press) var(--ease-press),transform var(--motion-press) var(--ease-press)}
+.button{transition:background-color 200ms ease,color 200ms ease,transform var(--motion-press) var(--ease-press)}
+.ts-btn:active,.ts-press:active,.button:active{transform:scale(var(--motion-press-scale))}
+
+/* M2 fade (only hidden when JS is running) */
+.ts-js .ts-fade{opacity:0;transition:opacity var(--motion-fade) var(--ease-fade)}
+.ts-js .ts-fade.is-in{opacity:1}
+
+/* M3 move: list items rise, screens slide. Start at .6 so text is never invisible. */
+.ts-js .ts-section .ts-item,.ts-js .ts-rise{opacity:.6;transform:translateY(var(--motion-rise-y))}
+.ts-js .ts-slide{opacity:.6;transform:translateX(var(--motion-slide-x))}
+.ts-js .ts-slide.is-back{transform:translateX(calc(var(--motion-slide-x)*-1))}
+.ts-js .ts-section .ts-item,.ts-js .ts-rise,.ts-js .ts-slide{
+  transition:opacity var(--motion-move) var(--ease-move),transform var(--motion-move) var(--ease-move),box-shadow var(--motion-move) var(--ease-move);
+  transition-delay:calc(var(--motion-stagger)*var(--i,0))}
+.ts-js .ts-section .ts-item.is-in,.ts-js .ts-rise.is-in,.ts-js .ts-slide.is-in{opacity:1;transform:none}
+/* keep the existing sticker hover lift working after entrance */
+.ts-js .ts-section .ts-item.is-in:hover{transform:translate(-2px,-2px);transition-delay:0s}
+
+/* M4 sheets + backdrop (fixed elements animate themselves, never an ancestor) */
+.ts-sheet{position:fixed;inset:auto 0 0 0;max-height:90dvh;overflow-y:auto;transform:translateY(100%);visibility:hidden;pointer-events:none;
+  transition:transform var(--motion-exit) var(--ease-exit),visibility 0s linear var(--motion-exit)}
+.ts-sheet.is-open{transform:none;visibility:visible;pointer-events:auto;transition:transform var(--motion-sheet-in) var(--ease-move),visibility 0s}
+.ts-backdrop{position:fixed;inset:0;background:#000;opacity:0;visibility:hidden;pointer-events:none;
+  transition:opacity var(--motion-exit) var(--ease-exit),visibility 0s linear var(--motion-exit)}
+.ts-backdrop.is-open{opacity:var(--motion-backdrop-opacity);visibility:visible;pointer-events:auto;transition:opacity var(--motion-sheet-in) var(--ease-move),visibility 0s}
+
+/* M5 skeleton */
+@keyframes ts-shimmer{from{transform:translateX(-100%)}to{transform:translateX(250%)}}
+.ts-skeleton{position:relative;overflow:hidden}
+.ts-skeleton::after{content:"";position:absolute;inset:0 auto 0 0;width:40%;
+  background:linear-gradient(90deg,rgba(255,255,255,0),rgba(255,255,255,.7),rgba(255,255,255,0));
+  animation:ts-shimmer var(--motion-skeleton) var(--ease-skeleton) infinite}
+
+/* M6 toast */
+.ts-toast{position:fixed;opacity:0;transform:translateY(var(--motion-rise-y));visibility:hidden;pointer-events:none;
+  transition:opacity var(--motion-toast-exit) var(--ease-exit),transform var(--motion-toast-exit) var(--ease-exit),visibility 0s linear var(--motion-toast-exit)}
+.ts-toast.is-in{opacity:1;transform:none;visibility:visible;pointer-events:auto;
+  transition:opacity var(--motion-toast-enter) var(--ease-move),transform var(--motion-toast-enter) var(--ease-move),visibility 0s}
+
+/* M7 character wave: inline SVG with .ts-character; arms .ts-arm-l/.ts-arm-r carry --pivot-x/--pivot-y in viewBox units */
+.ts-character .ts-arm-l,.ts-character .ts-arm-r{transform-box:view-box;transform-origin:var(--pivot-x) var(--pivot-y)}
+@keyframes ts-bob{0%,100%{transform:translateY(0)}50%{transform:translateY(calc(var(--motion-bob)*-1))}}
+.ts-character.is-in .ts-arm-l{animation:ts-wave-l 900ms var(--ease-move) 2}
+.ts-character.is-in .ts-arm-r{animation:ts-wave-r 900ms var(--ease-move) 120ms 2}
+.ts-character.is-in .ts-body{animation:ts-bob 900ms var(--ease-move) 2}
+/* arms that hang down (blue) wave outward: mirror the rotation */
+.ts-character.is-arms-down.is-in .ts-arm-l{animation-name:ts-wave-r}
+.ts-character.is-arms-down.is-in .ts-arm-r{animation-name:ts-wave-l}
+@keyframes ts-wave-l{0%,100%{transform:rotate(0)}30%{transform:rotate(calc(var(--motion-wave-angle)*-1))}70%{transform:rotate(calc(var(--motion-wave-angle)*0.5))}}
+@keyframes ts-wave-r{0%,100%{transform:rotate(0)}30%{transform:rotate(var(--motion-wave-angle))}70%{transform:rotate(calc(var(--motion-wave-angle)*-0.5))}}
+
+/* M8 micro-states */
+.ts-switch-thumb,.ts-check,.ts-chip{transition:background-color var(--motion-fade) var(--ease-fade),border-color var(--motion-fade) var(--ease-fade),transform var(--motion-fade) var(--ease-fade)}
+.ts-progress-fill{transform-origin:left;transition:transform var(--motion-move) var(--ease-move)}
+
+/* Reduced motion (spec §0.4, WCAG 2.3.3) */
+@media (prefers-reduced-motion: reduce){
+  *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;scroll-behavior:auto!important}
+  .ts-js .ts-section .ts-item,.ts-js .ts-rise,.ts-js .ts-slide,.ts-sheet,.ts-toast{transform:none!important;transition:opacity var(--motion-fade) var(--ease-fade)!important}
+  .ts-js .ts-section .ts-item,.ts-js .ts-rise,.ts-js .ts-slide{opacity:1!important}
+  .ts-skeleton::after{animation:none!important}
+  .ts-sheet{opacity:0}.ts-sheet.is-open{opacity:1}
+  .ts-character,.ts-character *{animation:none!important}
+}

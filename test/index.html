@@ -1,0 +1,9 @@
+<!doctype html><meta charset="utf-8"><title>pile + utm test</title>
+<style>body{font-family:system-ui;background:#FCC551;margin:0;padding:24px}.pile{position:relative;width:560px;height:200px;margin-top:40px}
+.pile img{position:absolute;width:84px;height:84px}</style>
+<h1>Hero pile test</h1><button data-ts-pile-pause>Pause motion</button>
+<div class="pile" data-ts-pile><img class="ts-pile-face" src="faces/Bert.svg" alt="" style="left:0px;bottom:0px"><img class="ts-pile-face" src="faces/Bingo.svg" alt="" style="left:90px;bottom:0px"><img class="ts-pile-face" src="faces/Cataphract.svg" alt="" style="left:180px;bottom:0px"><img class="ts-pile-face" src="faces/Flake.svg" alt="" style="left:270px;bottom:0px"><img class="ts-pile-face" src="faces/Jar.svg" alt="" style="left:360px;bottom:0px"><img class="ts-pile-face" src="faces/Leif.svg" alt="" style="left:450px;bottom:0px"><img class="ts-pile-face" src="faces/Ohno.svg" alt="" style="left:0px;bottom:86px"><img class="ts-pile-face" src="faces/Spokes.svg" alt="" style="left:90px;bottom:86px"><img class="ts-pile-face" src="faces/Tellitubby.svg" alt="" style="left:180px;bottom:86px"><img class="ts-pile-face" src="faces/Winky.svg" alt="" style="left:270px;bottom:86px"><img class="ts-pile-face" src="faces/flur.svg" alt="" style="left:360px;bottom:86px"><img class="ts-pile-face" src="faces/huh.svg" alt="" style="left:450px;bottom:86px"></div>
+<form id="f"><input type="hidden" name="source-page"><input type="hidden" name="utm-source"><input type="hidden" name="utm-medium"><input type="hidden" name="utm-campaign"><input type="hidden" name="utm-content"></form>
+<pre id="out"></pre>
+<script src="../dist/tripslip.js"></script>
+<script>setTimeout(()=>{document.getElementById('out').textContent=JSON.stringify(Object.fromEntries(new FormData(document.getElementById('f'))),null,1)},100)</script>
