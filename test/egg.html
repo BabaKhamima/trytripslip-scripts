@@ -1,0 +1,18 @@
+<!doctype html><html><head><meta charset="utf-8"><title>egg test</title>
+<style>
+body{font:16px system-ui;margin:0;background:#F7F4EC}
+.sp{height:900px}
+.row{display:flex;gap:24px;padding:80px 40px}
+.card{position:relative;width:300px;height:180px;background:#FCC551;border-radius:20px;padding:24px}
+/* mirrors the Webflow base classes */
+.ts-egg{position:absolute;bottom:100%;right:24px;width:64px;height:54px;overflow:hidden;padding:0;border:0;background:transparent}
+.ts-egg-tile{display:flex;align-items:center;justify-content:center;width:56px;height:56px;margin:0 auto;border:1.5px solid #0A0A0A;border-radius:14px;background:#C9F2D6;transform:translateY(14px)}
+.ts-egg-face{width:78%;height:auto}
+</style></head><body>
+<div class="sp"></div>
+<div class="row">
+ <div class="card">Card one<button class="ts-egg" id="e1" type="button" data-egg="leif" data-egg-name="Leif" aria-label="Hidden character Leif. Collect it."><span class="ts-egg-tile"><img class="ts-egg-face" src="https://cdn.prod.website-files.com/68b5bf7ebc6a5bee689433e6/6af5694a41a385c0805c9ac3_ts-face-leif.svg" alt=""></span></button></div>
+ <div class="card">Card two<button class="ts-egg" id="e2" type="button" data-egg="bert" data-egg-name="Bert" aria-label="Hidden character Bert. Collect it."><span class="ts-egg-tile"><img class="ts-egg-face" src="https://cdn.prod.website-files.com/68b5bf7ebc6a5bee689433e6/6af5694a41a385c0805c9ac3_ts-face-leif.svg" alt=""></span></button></div>
+</div>
+<div class="sp"></div>
+<script src="../dist/tripslip.js"></script></body></html>

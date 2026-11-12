@@ -43,3 +43,5 @@ Always pin a tag. Never point Webflow at `@main`.
 - Animate only `transform` and `opacity`. No scroll-jacking. Nothing loops longer than 5s without stopping.
 - Always respect `prefers-reduced-motion`.
 - Content is readable with JS off: hidden states only apply under `html.ts-js`.
+
+| egg.js | W3 hide-and-seek: `.ts-egg[data-egg]` buttons pop up from behind cards and wiggle until the first find, then never move again. Counter pill appears after the first find; toast on each find. Progress in localStorage only (`ts-eggs-v1`). |
