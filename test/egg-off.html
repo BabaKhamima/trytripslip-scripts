@@ -1,0 +1,6 @@
+<!doctype html><meta charset="utf-8"><title>egg off</title>
+<body data-ts-eggs="off">
+<button class="ts-egg" data-spot="A"><img alt=""></button><button class="ts-egg" data-spot="W"><img alt=""></button>
+<script>var day=new Intl.DateTimeFormat('en-CA',{timeZone:'America/Detroit'}).format(new Date());localStorage.setItem('ts-eggs-v2',JSON.stringify({day:day,found:[{id:'bert',name:'Bert'}]}));</script>
+<script src="../dist/tripslip.js"></script>
+<script>addEventListener('load',function(){setTimeout(function(){var e=document.querySelectorAll('.ts-egg');document.title=JSON.stringify({off:TSEggs.off(),pill:!!document.querySelector('.ts-egg-pill'),active:document.querySelectorAll('.ts-egg.is-active').length,hidden:[].every.call(e,function(x){return x.hidden})})},500)});</script>

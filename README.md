@@ -9,6 +9,7 @@ Scripts for trytripslip.com (Webflow). One file per page: `dist/tripslip.js`.
 | `src/utm-capture.js` | Adds (on `form[data-ts-utm]`) and fills hidden `source-page` and `utm-*` fields; first touch in the session wins | `zoho-funnel-plan` §2 |
 | `src/role-prefill.js` | On `form[data-ts-role-prefill]`, pre-selects the `role` radio from `?role=` (`admin` → `school-admin`) | `section-prompts` C1 |
 | `src/label-fix.js` | Repairs Webflow's empty `for=""` on labels (nested control → attribute removed; else pointed at the field's input) so chip radios toggle and text labels focus/name their inputs | WCAG 1.3.1 / 4.1.2 |
+| `src/legal.js` | On `.ts-legal` pages: section ids, legacy anchors (`#infouse`, `#prohibited` …), repoints old tripslip.app in-page links, "In short" callouts, and the "On this page" index (sticky desktop, collapsible phone, aria-current). Reading style lives in `components.css` (L1). Never changes legal wording. | Al, 2026-11-13 |
 | `src/blob-in.js` | Tonal blobs (`img[src*="ts-blob-"]`) scale 0.85→1 + fade in once per section, 60ms stagger; static under reduced motion | `expressive-layer` mkt-motion-blob-in |
 
 Nothing here collects personal data, sets cookies or talks to third parties. This repo is public (jsDelivr only serves public repos): never commit keys, tokens or student data.
@@ -45,4 +46,4 @@ Always pin a tag. Never point Webflow at `@main`.
 - Always respect `prefers-reduced-motion`.
 - Content is readable with JS off: hidden states only apply under `html.ts-js`.
 
-| egg.js | Daily hide-and-seek: 26 spots (`.ts-egg[data-spot=A–Z]`); each midnight (America/Detroit) a date-seeded shuffle picks 10, max 2 per page, and assigns the day's characters. Faces pop up and wiggle until the day's first find, then hold still. Progress in localStorage (`ts-eggs-v2`), resets daily. QA: `TSEggs.plan('YYYY-MM-DD')`. Pool lives in `POOL` — add a page's spots there when it publishes. |
+| egg.js | Daily hide-and-seek: 26 spots (`.ts-egg[data-spot=A–Z]`); each midnight (America/Detroit) a date-seeded shuffle picks 10, max 2 per page, and assigns the day's characters. Faces pop up and wiggle until the day's first find, then hold still. Progress in localStorage (`ts-eggs-v2`), resets daily. QA: `TSEggs.plan('YYYY-MM-DD')`. Pool lives in `POOL` — add a page's spots there when it publishes. Never runs on `OFF_PATHS` (`/privacy-policy`, `/terms-and-conditions`) or a page with `<body data-ts-eggs="off">`. |

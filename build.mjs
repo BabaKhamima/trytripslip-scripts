@@ -5,7 +5,7 @@ import { createHash } from 'node:crypto';
 
 const pkg = JSON.parse(readFileSync('package.json', 'utf8'));
 const css = (readFileSync('src/motion.css', 'utf8') + '\n' + readFileSync('src/components.css', 'utf8')).replace(/\/\*[\s\S]*?\*\//g, '').replace(/\s*\n\s*/g, '');
-const parts = ['motion.js', 'hero-pile.js', 'utm-capture.js', 'role-prefill.js', 'label-fix.js', 'blob-in.js', 'egg.js'].map(f => `/* ---- ${f} ---- */\n` + readFileSync(`src/${f}`, 'utf8'));
+const parts = ['motion.js', 'hero-pile.js', 'utm-capture.js', 'role-prefill.js', 'label-fix.js', 'legal.js', 'blob-in.js', 'egg.js'].map(f => `/* ---- ${f} ---- */\n` + readFileSync(`src/${f}`, 'utf8'));
 
 const cssInject = `(function(){if(document.getElementById('ts-motion-css'))return;var s=document.createElement('style');s.id='ts-motion-css';s.textContent=${JSON.stringify(css)};document.head.appendChild(s)})();`;
 

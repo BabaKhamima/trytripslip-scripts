@@ -196,7 +196,19 @@
     function hide() { toast.classList.remove('is-in'); }
   }
 
+  // Pages where the game never runs: no spots, no pop-ups, no counter pill, no toast. Legal pages stay plain.
+  // Opt any other page out with data-ts-eggs="off" on <body>.
+  var OFF_PATHS = ['/privacy-policy', '/terms-and-conditions'];
+  function gameOff() {
+    var path = location.pathname.replace(/\/+$/, '') || '/';
+    return OFF_PATHS.indexOf(path) !== -1 || (d.body && d.body.getAttribute('data-ts-eggs') === 'off');
+  }
+
   function go() {
+    if (gameOff()) {
+      [].forEach.call(d.querySelectorAll('.ts-egg[data-spot]'), function (e) { e.hidden = true; e.setAttribute('aria-hidden', 'true'); });
+      return;
+    }
     var day = today(), map = plan(day), found = load(day), need = [];
     [].forEach.call(d.querySelectorAll('.ts-egg[data-spot]'), function (e) { var w = map[e.getAttribute('data-spot')]; if (w) need.push(preload(w)); });
     found.forEach(function (f) { var w = byId(f.id); if (w) need.push(preload(w)); });
@@ -269,6 +281,6 @@
   }
 
   // Exposed for QA: TSEggs.plan('2026-11-13') shows that day's spots.
-  window.TSEggs = { plan: plan, today: today, contrast: contrast, pickCircle: pickCircle };
+  window.TSEggs = { plan: plan, today: today, off: gameOff, contrast: contrast, pickCircle: pickCircle };
   if (d.readyState !== 'loading') go(); else d.addEventListener('DOMContentLoaded', go);
 })();
