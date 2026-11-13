@@ -32,8 +32,8 @@
     ['winky', 'Winky', '6af5694b114f46e82ae985e8_ts-face-winky.svg', 'pink', '#FEB38B']
   ];
 
-  // Colours each spot's face sits against or peeks out of (measured desktop + phone, 2026-11-13). Used only to keep a
-  // character away from a card in its own colour; the circle colour itself is chosen live from what's really behind it.
+  // Colours each spot's face sits against or peeks out of (measured desktop + phone, 2026-11-13). plan() only puts a
+  // character on a spot where it passes MIN against all of these (with a circle or bare); paint() re-checks live.
   var TONES = {
     A: 'ffffff', B: 'fef7e3 fcc551', C: 'fef7e3 cef5ca 70ddef', D: 'ffffff faf7f0', E: 'ffffff', F: 'ffffff',
     G: 'faf7f0 b3b6fb', H: 'fcc551 ffffff', I: 'fef7e3 fcc551', J: 'fef7e3 cef5ca 70ddef', K: 'faf7f0',
@@ -42,24 +42,22 @@
     T: 'faf7f0 fcc551', U: 'faf7f0 ffffff 0364ff fcc551', V: 'faf7f0',
     W: 'faf7f0 b3b6fb', X: 'faf7f0 b3b6fb', Y: 'faf7f0 b3b6fb', Z: 'faf7f0 b3b6fb'
   };
-  // Circle behind each character: brand colours only, in preference order. A colour is used only if the character
-  // reads against it AND the circle reads against the page behind it, both at WCAG 1.4.11's 3:1. No black circles
-  // (Al, 2026-11-13): when neither passes, or the background is unknown, the character sits on the page with no backing.
-  var CIRCLES = ['#0364FF', '#FFFDF7'], MIN = 3;
+  // Backing behind each character: brand circles in preference order, then no circle. A circle is used only if the
+  // character's body reads against it AND the circle reads against the page behind it; bare only if the body reads
+  // against every colour behind it. Threshold MIN = 2:1 (Al, 2026-11-13: no black circles, relaxed from WCAG 1.4.11's
+  // 3:1 because the pastel characters can't reach 3:1 on the light pages without ink).
+  var CIRCLES = ['#0364FF', '#FFFDF7'], MIN = 2;
 
   function rgb(h) { h = h.replace('#', ''); return [parseInt(h.slice(0, 2), 16), parseInt(h.slice(2, 4), 16), parseInt(h.slice(4, 6), 16)]; }
   function lum(h) { var c = rgb(h).map(function (v) { v /= 255; return v <= 0.03928 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4); }); return 0.2126 * c[0] + 0.7152 * c[1] + 0.0722 * c[2]; }
   function contrast(a, b) { var x = lum(a), y = lum(b); return (Math.max(x, y) + 0.05) / (Math.min(x, y) + 0.05); }
-  function matchy(a, b) { var p = rgb(a), q = rgb(b); return Math.sqrt(Math.pow(p[0] - q[0], 2) + Math.pow(p[1] - q[1], 2) + Math.pow(p[2] - q[2], 2)) < 90; }
+  function readsOn(c, bgs) { for (var j = 0; j < bgs.length; j++) if (contrast(c, bgs[j]) < MIN) return false; return true; }
+  // Circle colour, '' for bare, or null when nothing passes.
   function pickCircle(body, bgs) {
-    if (!bgs) return null;
-    for (var i = 0; i < CIRCLES.length; i++) {
-      var c = CIRCLES[i], ok = contrast(body, c) >= MIN;
-      for (var j = 0; ok && j < bgs.length; j++) ok = contrast(c, bgs[j]) >= MIN;
-      if (ok) return c;
-    }
-    return null;
+    for (var i = 0; i < CIRCLES.length; i++) if (contrast(body, CIRCLES[i]) >= MIN && readsOn(CIRCLES[i], bgs)) return CIRCLES[i];
+    return readsOn(body, bgs) ? '' : null;
   }
+  function tones(letter) { return (TONES[letter] || 'ffffff').split(' ').filter(Boolean).map(function (t) { return '#' + t; }); }
 
   var d = document, root = d.documentElement;
   var rm = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -72,28 +70,22 @@
   function rng(seed) { return function () { seed |= 0; seed = seed + 0x6D2B79F5 | 0; var t = Math.imul(seed ^ seed >>> 15, 1 | seed); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; }; }
   function shuffle(arr, rand) { var a = arr.slice(); for (var i = a.length - 1; i > 0; i--) { var j = Math.floor(rand() * (i + 1)); var t = a[i]; a[i] = a[j]; a[j] = t; } return a; }
 
-  // Today's plan: spot letter → cast member. Same for every visitor on the same Detroit date.
+  // Today's plan: spot letter → cast member. Same for every visitor on the same Detroit date. Walk the shuffled pool;
+  // a spot is used only if a not-yet-placed character is visible there (pickCircle !== null against its TONES).
+  // Spots no character can pass on (e.g. U) are never used. Fewer than TODAY_COUNT only if the pool runs out.
   function plan(day) {
     var rand = rng(seedFrom('tripslip-eggs:' + day));
-    var perPage = {}, picked = [];
-    shuffle(POOL, rand).forEach(function (s) {
-      if (picked.length >= TODAY_COUNT) return;
-      var n = perPage[s[1]] || 0;
-      if (n >= PER_PAGE) return;
-      perPage[s[1]] = n + 1; picked.push(s[0]);
-    });
-    var cast = shuffle(CAST, rand), map = {};
-    // Most-constrained spots (most surrounding colours) choose first, so the leftovers rarely clash.
-    picked.sort().sort(function (a, b) { return (TONES[b] || '').length - (TONES[a] || '').length; }).forEach(function (letter) {
-      var tones = (TONES[letter] || '').split(' ').filter(Boolean), pick = -1;
-      for (var i = 0; i < cast.length && pick < 0; i++) {
-        var clash = false;
-        for (var t = 0; t < tones.length && !clash; t++) clash = matchy(cast[i][4], '#' + tones[t]);
-        if (!clash) pick = i;
+    var spots = shuffle(POOL, rand), cast = shuffle(CAST, rand), perPage = {}, map = {}, placed = 0;
+    for (var s = 0; s < spots.length && placed < TODAY_COUNT && cast.length; s++) {
+      var letter = spots[s][0], page = spots[s][1];
+      if ((perPage[page] || 0) >= PER_PAGE) continue;
+      var bgs = tones(letter);
+      for (var i = 0; i < cast.length; i++) {
+        if (pickCircle(cast[i][4], bgs) === null) continue;
+        map[letter] = cast.splice(i, 1)[0]; perPage[page] = (perPage[page] || 0) + 1; placed++;
+        break;
       }
-      if (pick < 0) pick = 0;
-      map[letter] = cast.splice(pick, 1)[0];
-    });
+    }
     return map;
   }
 
@@ -118,6 +110,7 @@
     var t = SVG[who[0]] && SVG[who[0]].text;
     if (!t) return CDN + who[2];
     var fill = pickCircle(who[4], bgs), swapped = false;
+    if (fill === null) fill = ''; // live background differs from the measured one: show bare rather than nothing
     var out = t.replace(/<rect width="([\d.]+)" height="([\d.]+)" rx="[\d.]+" fill="#[0-9A-Fa-f]{6}"\s*\/>/, function (m, w, h) {
       swapped = true; w = +w; h = +h;
       if (!fill) return '';
@@ -128,7 +121,7 @@
   }
   function opaque(c) { var m = c.match(/[\d.]+/g); if (!m || (m.length > 3 && +m[3] < 0.5)) return null; return '#' + m.slice(0, 3).map(function (v) { return ('0' + (+v | 0).toString(16)).slice(-2); }).join(''); }
   // What's visually behind the face: for points across the top of the spot, the nearest ancestor that covers the point and
-  // has a solid background. Spots peek out above their card, so "parent" alone would be wrong. A background image → unknown → no circle.
+  // has a solid background. Spots peek out above their card, so "parent" alone would be wrong. A background image → unknown → null (paint() falls back to TONES).
   function behind(e) {
     var r = e.getBoundingClientRect(); if (!r.width) return null;
     var pts = [[r.left + 4, r.top + 4], [r.right - 4, r.top + 4], [r.left + r.width / 2, r.top + 4]], out = [];
@@ -217,9 +210,10 @@
     Promise.all(need).then(function () { start(day, map, found); }, function () { start(day, map, found); });
   }
 
+  // Live check against what's really behind the face; if that can't be read (background image), use the measured TONES.
   function paint(e) {
     var who = byId(e.getAttribute('data-egg')), img = e.querySelector('img');
-    if (who && img) img.src = faceSrc(who, behind(e));
+    if (who && img) img.src = faceSrc(who, behind(e) || tones(e.getAttribute('data-spot')));
   }
 
   function start(day, map, found) {
