@@ -8,6 +8,7 @@ Scripts for trytripslip.com (Webflow). One file per page: `dist/tripslip.js`.
 | `src/hero-pile.js` | Character pile: drop-in once per session, idle wiggle every 12–18s, pauses off-screen and when the tab is hidden, static under reduced motion | `expressive-layer.md` §7/7a |
 | `src/utm-capture.js` | Adds (on `form[data-ts-utm]`) and fills hidden `source-page` and `utm-*` fields; first touch in the session wins | `zoho-funnel-plan` §2 |
 | `src/role-prefill.js` | On `form[data-ts-role-prefill]`, pre-selects the `role` radio from `?role=` (`admin` → `school-admin`) | `section-prompts` C1 |
+| `src/label-fix.js` | Repairs Webflow's empty `for=""` on labels (nested control → attribute removed; else pointed at the field's input) so chip radios toggle and text labels focus/name their inputs | WCAG 1.3.1 / 4.1.2 |
 | `src/blob-in.js` | Tonal blobs (`img[src*="ts-blob-"]`) scale 0.85→1 + fade in once per section, 60ms stagger; static under reduced motion | `expressive-layer` mkt-motion-blob-in |
 
 Nothing here collects personal data, sets cookies or talks to third parties. This repo is public (jsDelivr only serves public repos): never commit keys, tokens or student data.

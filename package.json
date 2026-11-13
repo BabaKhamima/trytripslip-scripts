@@ -1,6 +1,6 @@
 {
   "name": "trytripslip-scripts",
-  "version": "0.1.11",
+  "version": "0.1.12",
   "private": true,
   "description": "Scripts for trytripslip.com (Webflow): motion patterns, hero pile, UTM capture.",
   "type": "module",

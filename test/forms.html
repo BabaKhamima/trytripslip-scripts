@@ -1,9 +1,17 @@
 <!doctype html><meta charset="utf-8"><title>forms test</title>
 <form data-ts-utm data-ts-role-prefill name="t">
-<label><input type="radio" name="role" value="school-admin">School admin</label>
-<label><input type="radio" name="role" value="parent">Parent</label>
-<input name="email">
+<label for="" class="ts-chip"><input type="radio" name="role" value="school-admin" class="ts-chip-input"><span class="ts-chip-text" id="c1">School admin</span></label>
+<label for="" class="ts-chip"><input type="radio" name="role" value="parent" class="ts-chip-input"><span class="ts-chip-text" id="c2">Parent</span></label>
+<label for="" class="ts-chip"><input type="radio" name="contact-preference" value="email" class="ts-chip-input"><span class="ts-chip-text" id="c3">Email</span></label>
+<label for="" class="ts-chip"><input type="radio" name="contact-preference" value="phone" class="ts-chip-input"><span class="ts-chip-text" id="c4">Phone</span></label>
+<div class="ts-field"><label for="" class="ts-label" id="l1">Work email</label><input class="ts-input" name="email" id="ct-email"></div>
+<div class="ts-field"><label for="" class="ts-label" id="l2">Message</label><textarea name="message"></textarea></div>
 </form>
 <pre id="out"></pre>
 <script src="../dist/tripslip.js"></script>
-<script>addEventListener('load',function(){var f=document.forms.t;var o={checked:(f.querySelector('input[name=role]:checked')||{}).value||null};['source-page','utm-source','utm-medium','utm-campaign','utm-content'].forEach(function(n){var i=f.querySelector('input[name="'+n+'"]');o[n]=i?[i.type,i.value]:null});document.getElementById('out').textContent=JSON.stringify(o);});</script>
+<script>addEventListener('load',function(){var f=document.forms.t,$=function(i){return document.getElementById(i)};
+$('c2').click();$('c4').click();
+var o={role:(f.querySelector('input[name=role]:checked')||{}).value||null,pref:(f.querySelector('input[name=contact-preference]:checked')||{}).value||null,
+emailLabelFor:$('l1').htmlFor,msgLabelCtrl:$('l2').control&&$('l2').control.name};
+['source-page','utm-source'].forEach(function(n){var i=f.querySelector('input[name="'+n+'"]');o[n]=i?i.type:null});
+$('out').textContent=JSON.stringify(o);document.title=JSON.stringify(o)});</script>
