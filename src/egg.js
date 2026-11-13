@@ -43,21 +43,22 @@
     W: 'faf7f0 b3b6fb', X: 'faf7f0 b3b6fb', Y: 'faf7f0 b3b6fb', Z: 'faf7f0 b3b6fb'
   };
   // Circle behind each character: brand colours only, in preference order. A colour is used only if the character
-  // reads against it AND the circle reads against the page behind it, both at WCAG 1.4.11's 3:1. Ink passes everywhere.
-  var CIRCLES = ['#0364FF', '#FFFDF7', '#0A0A0A'], INK = '#0A0A0A', MIN = 3;
+  // reads against it AND the circle reads against the page behind it, both at WCAG 1.4.11's 3:1. No black circles
+  // (Al, 2026-11-13): when neither passes, or the background is unknown, the character sits on the page with no backing.
+  var CIRCLES = ['#0364FF', '#FFFDF7'], MIN = 3;
 
   function rgb(h) { h = h.replace('#', ''); return [parseInt(h.slice(0, 2), 16), parseInt(h.slice(2, 4), 16), parseInt(h.slice(4, 6), 16)]; }
   function lum(h) { var c = rgb(h).map(function (v) { v /= 255; return v <= 0.03928 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4); }); return 0.2126 * c[0] + 0.7152 * c[1] + 0.0722 * c[2]; }
   function contrast(a, b) { var x = lum(a), y = lum(b); return (Math.max(x, y) + 0.05) / (Math.min(x, y) + 0.05); }
   function matchy(a, b) { var p = rgb(a), q = rgb(b); return Math.sqrt(Math.pow(p[0] - q[0], 2) + Math.pow(p[1] - q[1], 2) + Math.pow(p[2] - q[2], 2)) < 90; }
   function pickCircle(body, bgs) {
-    if (!bgs) return INK;
+    if (!bgs) return null;
     for (var i = 0; i < CIRCLES.length; i++) {
       var c = CIRCLES[i], ok = contrast(body, c) >= MIN;
       for (var j = 0; ok && j < bgs.length; j++) ok = contrast(c, bgs[j]) >= MIN;
       if (ok) return c;
     }
-    return INK;
+    return null;
   }
 
   var d = document, root = d.documentElement;
@@ -119,6 +120,7 @@
     var fill = pickCircle(who[4], bgs), swapped = false;
     var out = t.replace(/<rect width="([\d.]+)" height="([\d.]+)" rx="[\d.]+" fill="#[0-9A-Fa-f]{6}"\s*\/>/, function (m, w, h) {
       swapped = true; w = +w; h = +h;
+      if (!fill) return '';
       return '<circle cx="' + w / 2 + '" cy="' + h / 2 + '" r="' + Math.min(w, h) / 2 + '" fill="' + fill + '"/>';
     });
     if (!swapped) return CDN + who[2];
@@ -126,7 +128,7 @@
   }
   function opaque(c) { var m = c.match(/[\d.]+/g); if (!m || (m.length > 3 && +m[3] < 0.5)) return null; return '#' + m.slice(0, 3).map(function (v) { return ('0' + (+v | 0).toString(16)).slice(-2); }).join(''); }
   // What's visually behind the face: for points across the top of the spot, the nearest ancestor that covers the point and
-  // has a solid background. Spots peek out above their card, so "parent" alone would be wrong. A background image → unknown → ink.
+  // has a solid background. Spots peek out above their card, so "parent" alone would be wrong. A background image → unknown → no circle.
   function behind(e) {
     var r = e.getBoundingClientRect(); if (!r.width) return null;
     var pts = [[r.left + 4, r.top + 4], [r.right - 4, r.top + 4], [r.left + r.width / 2, r.top + 4]], out = [];
