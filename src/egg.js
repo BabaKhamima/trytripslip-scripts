@@ -19,18 +19,46 @@
     ['W', 'about'], ['X', 'about'], ['Y', 'about'], ['Z', 'about']
   ];
   var CAST = [
-    ['bert', 'Bert', '6af56949a0c2d46246e99f66_ts-face-bert.svg', 'cyan'],
-    ['bingo', 'Bingo', '6af569492ffaf023fb0c6973_ts-face-bingo.svg', 'lavender'],
-    ['cataphract', 'Cataphract', '6af569492ffaf023fb0c69a0_ts-face-cataphract.svg', 'mint'],
-    ['flake', 'Flake', '6af56949b7460b3d246ce03b_ts-face-flake.svg', 'pink'],
-    ['flur', 'Flur', '6af5694931691ad790f6a0f6_ts-face-flur.svg', 'pink'],
-    ['huh', 'Huh', '6af5694a08e7cab736d403d3_ts-face-huh.svg', 'yellow'],
-    ['jar', 'Jar', '6af5694ac97c5a2528920fc4_ts-face-jar.svg', 'cyan'],
-    ['leif', 'Leif', '6af5694a41a385c0805c9ac3_ts-face-leif.svg', 'lavender'],
-    ['ohno', 'Oh No', '6af5694a27313a861dee4dfc_ts-face-ohno.svg', 'yellow'],
-    ['spokes', 'Spokes', '6af5694a41a385c0805c9afe_ts-face-spokes.svg', 'mint'],
-    ['winky', 'Winky', '6af5694b114f46e82ae985e8_ts-face-winky.svg', 'pink']
+    ['bert', 'Bert', '6af56949a0c2d46246e99f66_ts-face-bert.svg', 'cyan', '#0364FF'],
+    ['bingo', 'Bingo', '6af569492ffaf023fb0c6973_ts-face-bingo.svg', 'lavender', '#D294F7'],
+    ['cataphract', 'Cataphract', '6af569492ffaf023fb0c69a0_ts-face-cataphract.svg', 'mint', '#B3B6FB'],
+    ['flake', 'Flake', '6af56949b7460b3d246ce03b_ts-face-flake.svg', 'pink', '#FF5000'],
+    ['flur', 'Flur', '6af5694931691ad790f6a0f6_ts-face-flur.svg', 'pink', '#70DDEF'],
+    ['huh', 'Huh', '6af5694a08e7cab736d403d3_ts-face-huh.svg', 'yellow', '#FEB38B'],
+    ['jar', 'Jar', '6af5694ac97c5a2528920fc4_ts-face-jar.svg', 'cyan', '#FC4444'],
+    ['leif', 'Leif', '6af5694a41a385c0805c9ac3_ts-face-leif.svg', 'lavender', '#FFC251'],
+    ['ohno', 'Oh No', '6af5694a27313a861dee4dfc_ts-face-ohno.svg', 'yellow', '#FFC251'],
+    ['spokes', 'Spokes', '6af5694a41a385c0805c9afe_ts-face-spokes.svg', 'mint', '#FEB38B'],
+    ['winky', 'Winky', '6af5694b114f46e82ae985e8_ts-face-winky.svg', 'pink', '#FEB38B']
   ];
+
+  // Colours each spot's face sits against or peeks out of (measured desktop + phone, 2026-11-13). Used only to keep a
+  // character away from a card in its own colour; the circle colour itself is chosen live from what's really behind it.
+  var TONES = {
+    A: 'ffffff', B: 'fef7e3 fcc551', C: 'fef7e3 cef5ca 70ddef', D: 'ffffff faf7f0', E: 'ffffff', F: 'ffffff',
+    G: 'faf7f0 b3b6fb', H: 'fcc551 ffffff', I: 'fef7e3 fcc551', J: 'fef7e3 cef5ca 70ddef', K: 'faf7f0',
+    L: 'ffffff b3b6fb', M: 'ffffff 70ddef ffc7a8', N: 'ffffff cef5ca ffabe1', O: 'faf7f0',
+    P: 'faf7f0 fcc551', Q: 'faf7f0 70ddef', R: 'faf7f0 b3b6fb', S: 'faf7f0 b3b6fb',
+    T: 'faf7f0 fcc551', U: 'faf7f0 ffffff 0364ff fcc551', V: 'faf7f0',
+    W: 'faf7f0 b3b6fb', X: 'faf7f0 b3b6fb', Y: 'faf7f0 b3b6fb', Z: 'faf7f0 b3b6fb'
+  };
+  // Circle behind each character: brand colours only, in preference order. A colour is used only if the character
+  // reads against it AND the circle reads against the page behind it, both at WCAG 1.4.11's 3:1. Ink passes everywhere.
+  var CIRCLES = ['#0364FF', '#FFFDF7', '#0A0A0A'], INK = '#0A0A0A', MIN = 3;
+
+  function rgb(h) { h = h.replace('#', ''); return [parseInt(h.slice(0, 2), 16), parseInt(h.slice(2, 4), 16), parseInt(h.slice(4, 6), 16)]; }
+  function lum(h) { var c = rgb(h).map(function (v) { v /= 255; return v <= 0.03928 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4); }); return 0.2126 * c[0] + 0.7152 * c[1] + 0.0722 * c[2]; }
+  function contrast(a, b) { var x = lum(a), y = lum(b); return (Math.max(x, y) + 0.05) / (Math.min(x, y) + 0.05); }
+  function matchy(a, b) { var p = rgb(a), q = rgb(b); return Math.sqrt(Math.pow(p[0] - q[0], 2) + Math.pow(p[1] - q[1], 2) + Math.pow(p[2] - q[2], 2)) < 90; }
+  function pickCircle(body, bgs) {
+    if (!bgs) return INK;
+    for (var i = 0; i < CIRCLES.length; i++) {
+      var c = CIRCLES[i], ok = contrast(body, c) >= MIN;
+      for (var j = 0; ok && j < bgs.length; j++) ok = contrast(c, bgs[j]) >= MIN;
+      if (ok) return c;
+    }
+    return INK;
+  }
 
   var d = document, root = d.documentElement;
   var rm = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -54,7 +82,17 @@
       perPage[s[1]] = n + 1; picked.push(s[0]);
     });
     var cast = shuffle(CAST, rand), map = {};
-    picked.sort().forEach(function (letter, i) { map[letter] = cast[i]; });
+    // Most-constrained spots (most surrounding colours) choose first, so the leftovers rarely clash.
+    picked.sort().sort(function (a, b) { return (TONES[b] || '').length - (TONES[a] || '').length; }).forEach(function (letter) {
+      var tones = (TONES[letter] || '').split(' ').filter(Boolean), pick = -1;
+      for (var i = 0; i < cast.length && pick < 0; i++) {
+        var clash = false;
+        for (var t = 0; t < tones.length && !clash; t++) clash = matchy(cast[i][4], '#' + tones[t]);
+        if (!clash) pick = i;
+      }
+      if (pick < 0) pick = 0;
+      map[letter] = cast.splice(pick, 1)[0];
+    });
     return map;
   }
 
@@ -65,6 +103,43 @@
   function save(day, found) { try { localStorage.setItem(KEY, JSON.stringify({ day: day, found: found })); } catch (e) {} }
   function has(list, id) { for (var i = 0; i < list.length; i++) if (list[i].id === id) return true; return false; }
   function el(tag, cls, text) { var n = d.createElement(tag); if (cls) n.className = cls; if (text) n.textContent = text; return n; }
+
+  // Face art: each SVG ships with a pale rounded-square backing that most characters fail 3:1 against. We fetch the SVG,
+  // swap that backing for a circle in a colour picked by pickCircle(), and serve it as a data URL. On any failure the
+  // original file is used, so the game never breaks.
+  var SVG = {};
+  function byId(id) { for (var i = 0; i < CAST.length; i++) if (CAST[i][0] === id) return CAST[i]; return null; }
+  function preload(who) {
+    if (!SVG[who[0]]) SVG[who[0]] = fetch(CDN + who[2]).then(function (r) { return r.ok ? r.text() : null; }).then(function (t) { SVG[who[0]].text = t; return t; }, function () { return null; });
+    return SVG[who[0]];
+  }
+  function faceSrc(who, bgs) {
+    var t = SVG[who[0]] && SVG[who[0]].text;
+    if (!t) return CDN + who[2];
+    var out = t.replace(/<rect width="50" height="50" rx="18" fill="#[0-9A-Fa-f]{6}"\s*\/>/, '<circle cx="25" cy="25" r="25" fill="' + pickCircle(who[4], bgs) + '"/>');
+    return 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(out);
+  }
+  function opaque(c) { var m = c.match(/[\d.]+/g); if (!m || (m.length > 3 && +m[3] < 0.5)) return null; return '#' + m.slice(0, 3).map(function (v) { return ('0' + (+v | 0).toString(16)).slice(-2); }).join(''); }
+  // What's visually behind the face: for points across the top of the spot, the nearest ancestor that covers the point and
+  // has a solid background. Spots peek out above their card, so "parent" alone would be wrong. A background image → unknown → ink.
+  function behind(e) {
+    var r = e.getBoundingClientRect(); if (!r.width) return null;
+    var pts = [[r.left + 4, r.top + 4], [r.right - 4, r.top + 4], [r.left + r.width / 2, r.top + 4]], out = [];
+    for (var i = 0; i < pts.length; i++) {
+      var n = e.parentElement, hit = null;
+      while (n && n !== d.documentElement) {
+        var b = n.getBoundingClientRect();
+        if (pts[i][0] >= b.left && pts[i][0] <= b.right && pts[i][1] >= b.top && pts[i][1] <= b.bottom) {
+          var cs = getComputedStyle(n), c = opaque(cs.backgroundColor);
+          if (c) { hit = c; break; }
+          if (cs.backgroundImage !== 'none') return null;
+        }
+        n = n.parentElement;
+      }
+      out.push(hit || opaque(getComputedStyle(d.body).backgroundColor) || '#ffffff');
+    }
+    return out;
+  }
 
   var pill, pillFace, pillLabel, pillDots, toast, toastTimer;
 
@@ -87,7 +162,7 @@
   function renderPill(found, reveal) {
     buildPill();
     var last = found[found.length - 1], n = found.length, done = n >= TODAY_COUNT;
-    pillFace.src = last.src || '';
+    var lw = byId(last.id); pillFace.src = lw ? faceSrc(lw, [done ? '#FCC551' : '#FFFDF7']) : (last.src || '');
     pillLabel.textContent = done ? 'All ' + TODAY_COUNT + ' found. New spots at midnight.' : n + ' of ' + TODAY_COUNT + ' found today';
     [].forEach.call(pillDots.children, function (dot, i) { dot.className = i < n ? 'is-on' : ''; });
     pill.classList.toggle('is-done', done);
@@ -103,7 +178,7 @@
       d.body.appendChild(toast);
     }
     toast.textContent = '';
-    var tile = el('span', 'ts-egg-toast-tile'); var img = el('img'); img.alt = ''; img.src = item.src || ''; tile.appendChild(img);
+    var tile = el('span', 'ts-egg-toast-tile'); var img = el('img'); img.alt = ''; var iw = byId(item.id); img.src = iw ? faceSrc(iw, ['#FFFDF7']) : (item.src || ''); tile.appendChild(img);
     var body = el('span', 'ts-egg-toast-body');
     body.appendChild(el('strong', 'ts-egg-toast-title', 'You found ' + item.name + '!'));
     body.appendChild(el('span', 'ts-egg-toast-sub', n >= TODAY_COUNT ? 'That’s all ' + TODAY_COUNT + ' for today. They move at midnight.' : n + ' of ' + TODAY_COUNT + '. The rest are hiding around the site.'));
@@ -117,7 +192,18 @@
   }
 
   function go() {
-    var day = today(), map = plan(day), found = load(day);
+    var day = today(), map = plan(day), found = load(day), need = [];
+    [].forEach.call(d.querySelectorAll('.ts-egg[data-spot]'), function (e) { var w = map[e.getAttribute('data-spot')]; if (w) need.push(preload(w)); });
+    found.forEach(function (f) { var w = byId(f.id); if (w) need.push(preload(w)); });
+    Promise.all(need).then(function () { start(day, map, found); }, function () { start(day, map, found); });
+  }
+
+  function paint(e) {
+    var who = byId(e.getAttribute('data-egg')), img = e.querySelector('img');
+    if (who && img) img.src = faceSrc(who, behind(e));
+  }
+
+  function start(day, map, found) {
     var eggs = [].slice.call(d.querySelectorAll('.ts-egg[data-spot]')).filter(function (e) {
       var who = map[e.getAttribute('data-spot')];
       if (!who) return false;
@@ -125,10 +211,13 @@
       e.setAttribute('data-egg', who[0]); e.setAttribute('data-egg-name', who[1]);
       e.setAttribute('aria-label', 'Hidden character: ' + who[1] + '. Click to collect.');
       var tile = e.querySelector('.ts-egg-tile'); if (tile) tile.className = 'ts-egg-tile is-' + who[3];
-      var img = e.querySelector('img'); if (img) { img.removeAttribute('srcset'); img.removeAttribute('sizes'); img.src = CDN + who[2]; }
+      var img = e.querySelector('img'); if (img) { img.removeAttribute('srcset'); img.removeAttribute('sizes'); img.removeAttribute('loading'); }
       e.classList.add('is-active');
+      paint(e); // after is-active, so the spot has a box to measure
       return true;
     });
+    // Phone and desktop put some spots on different backgrounds: re-pick circle colours after a resize.
+    var rt; window.addEventListener('resize', function () { clearTimeout(rt); rt = setTimeout(function () { eggs.forEach(function (e) { if (!e.hidden) paint(e); }); }, 250); });
     var animate = !found.length && !rm && 'IntersectionObserver' in window;
     if (found.length) root.classList.add('ts-eggs-done');
 
@@ -136,7 +225,7 @@
       var id = e.getAttribute('data-egg');
       if (has(found, id)) return;
       var img = e.querySelector('img');
-      var item = { id: id, name: e.getAttribute('data-egg-name') || 'a friend', src: img ? img.src : '' };
+      var who = byId(id), item = { id: id, name: e.getAttribute('data-egg-name') || 'a friend', src: who ? CDN + who[2] : (img ? img.src : '') };
       found.push(item); save(day, found);
       root.classList.add('ts-eggs-done');
       eggs.forEach(function (x) { x.classList.remove('is-wiggle', 'is-pre'); });
@@ -175,6 +264,6 @@
   }
 
   // Exposed for QA: TSEggs.plan('2026-11-13') shows that day's spots.
-  window.TSEggs = { plan: plan, today: today };
+  window.TSEggs = { plan: plan, today: today, contrast: contrast, pickCircle: pickCircle };
   if (d.readyState !== 'loading') go(); else d.addEventListener('DOMContentLoaded', go);
 })();
