@@ -61,21 +61,29 @@
 /* W3 hide-and-seek: set up by egg.js. Base box/tile/face sizes live in Webflow classes (ts-egg, ts-egg-tile, ts-egg-face). */
 .ts-egg{appearance:none;-webkit-appearance:none;cursor:pointer}
 .ts-js .ts-egg:not(.is-active){display:none!important}
-.ts-egg-tile.is-mint{background-color:#CDEFD7}
+.ts-egg .ts-egg-tile{background:none!important;border:0!important;border-radius:50%!important;box-shadow:none!important;display:flex;align-items:center;justify-content:center}
+.ts-egg .ts-egg-face,.ts-egg .ts-egg-tile img{width:100%!important;max-width:none;height:auto;display:block;clip-path:circle(50%)}
+/* Subtle idle on every face (separate from the pre-find wiggle, which moves the tile): slow bob + tilt via individual props so it composes. */
+.ts-egg .ts-egg-tile img,.ts-egg-toast-tile img{animation:ts-face-idle 4.8s ease-in-out var(--idle-delay,0s) infinite}
+@keyframes ts-face-idle{0%,100%{translate:0 0;rotate:0deg}30%{translate:0 -2px;rotate:-3deg}60%{translate:0 -1px;rotate:2.5deg}}
+.ts-egg:hover .ts-egg-tile img{animation-play-state:paused}
 .ts-egg .ts-egg-tile{transition:transform 560ms cubic-bezier(.34,1.56,.64,1)}
 .ts-js .ts-egg.is-pre .ts-egg-tile{transform:translateY(110%)}
 .ts-egg.is-wiggle .ts-egg-tile{animation:ts-egg-wiggle 7s ease-in-out var(--egg-delay,2s) infinite}
 .ts-egg.is-wiggle:hover .ts-egg-tile,.ts-egg.is-wiggle:focus-visible .ts-egg-tile{animation-play-state:paused}
 @keyframes ts-egg-wiggle{0%,84%,100%{transform:translateY(14px) rotate(0)}87%{transform:translateY(4px) rotate(-10deg)}90%{transform:translateY(4px) rotate(9deg)}93%{transform:translateY(6px) rotate(-6deg)}96%{transform:translateY(10px) rotate(3deg)}}
-.ts-egg:focus-visible{outline:2px solid #0364FF;outline-offset:2px;border-radius:12px}
+.ts-egg:focus-visible{outline:2px solid #0364FF;outline-offset:2px;border-radius:50%}
 .ts-egg[hidden],.ts-egg.is-found{display:none!important}
 .ts-eggs-done .ts-egg .ts-egg-tile{animation:none!important;transition:none!important}
 .ts-egg-pill{position:fixed;left:16px;bottom:16px;z-index:60;display:flex;align-items:center;gap:10px;padding:6px 8px 6px 6px;background:#FFFDF7;border:1.5px solid #0A0A0A;border-radius:999px;box-shadow:2px 2px 0 #0A0A0A;color:#0A0A0A;font:inherit}
 .ts-egg-pill[hidden]{display:none}
 .ts-egg-pill.is-done{background:#FCC551}
-.ts-egg-pill-tile,.ts-egg-toast-tile{display:flex;align-items:center;justify-content:center;flex:none;background:#B3B6FB;border:1.5px solid #0A0A0A}
-.ts-egg-pill-tile{width:32px;height:32px;border-radius:9px}
-.ts-egg-pill-tile img{width:78%;height:auto}
+.ts-egg-pill-tile,.ts-egg-toast-tile{display:flex;align-items:center;justify-content:center;flex:none;background:none;border:0}
+.ts-egg-pill-tile img,.ts-egg-toast-tile img{clip-path:circle(50%);display:block}
+.ts-egg-pill-tile{width:32px;height:32px;border-radius:50%}
+.ts-egg-pill-tile img{width:100%;height:auto}
+.ts-egg-pill-tile.is-hop img{animation:ts-face-hop 520ms cubic-bezier(.34,1.56,.64,1)}
+@keyframes ts-face-hop{0%,100%{translate:0 0;rotate:0deg}40%{translate:0 -5px;rotate:-8deg}70%{translate:0 1px;rotate:4deg}}
 .ts-egg-pill-text{display:flex;flex-direction:column;gap:4px}
 .ts-egg-pill-label{font-size:14px;font-weight:700;line-height:1.1}
 .ts-egg-pill-dots{display:flex;gap:4px}
@@ -85,13 +93,13 @@
 .ts-egg-pill-close:focus-visible,.ts-egg-toast-close:focus-visible{outline:2px solid #0364FF;outline-offset:1px}
 .ts-egg-toast{position:fixed;left:16px;bottom:72px;z-index:61;display:flex;align-items:center;gap:14px;width:min(340px,calc(100vw - 32px));padding:14px 10px 14px 14px;background:#FFFDF7;border:2px solid #0A0A0A;border-radius:14px;box-shadow:4px 4px 0 #0A0A0A;color:#0A0A0A;opacity:0;transform:translateY(8px);pointer-events:none;transition:opacity 280ms ease-out,transform 280ms cubic-bezier(.2,.8,.2,1)}
 .ts-egg-toast.is-in{opacity:1;transform:none;pointer-events:auto}
-.ts-egg-toast-tile{width:52px;height:52px;border-radius:14px;background:#C9F2D6}
-.ts-egg-toast-tile img{width:78%;height:auto}
+.ts-egg-toast-tile{width:52px;height:52px;border-radius:50%}
+.ts-egg-toast-tile img{width:100%;height:auto}
 .ts-egg-toast-body{display:flex;flex-direction:column;gap:2px;flex:1}
 .ts-egg-toast-title{font-size:18px;font-weight:700;line-height:1.2}
 .ts-egg-toast-sub{font-size:13.5px;line-height:1.35;color:#5E5A52}
 @media (max-width:479px){.ts-egg-pill{left:50%;transform:translateX(-50%)}.ts-egg-toast{left:16px;bottom:76px}}
 @media (prefers-reduced-motion: reduce){
-  .ts-egg .ts-egg-tile{animation:none!important;transition:none!important}
+  .ts-egg .ts-egg-tile,.ts-egg .ts-egg-tile img,.ts-egg-toast-tile img,.ts-egg-pill-tile img{animation:none!important;transition:none!important}
   .ts-egg-toast{transform:none;transition:opacity 200ms ease-out}
 }

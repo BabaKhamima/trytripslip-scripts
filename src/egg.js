@@ -3,7 +3,7 @@
    America/Detroit) a date-seeded shuffle picks TODAY_COUNT of them, never more than PER_PAGE on one page, and assigns
    the day's characters to them. Everyone sees the same layout on a given day. Progress resets at midnight.
    Before the day's first find: active faces pop up from behind their card once, then wiggle now and then.
-   After the first find: no motion on any face for the rest of the day. Counter pill appears after the first find.
+   After the first find: the pop-up/wiggle stops; every face keeps a subtle idle bob (CSS). Counter pill appears after the first find.
    Reduced motion: faces just sit peeking. Never gates content; progress stays in localStorage. */
 (function () {
   var KEY = 'ts-eggs-v2', PILL_KEY = 'ts-eggs-pill-hidden', TODAY_COUNT = 10, PER_PAGE = 2, TZ = 'America/Detroit';
@@ -91,6 +91,7 @@
     pillLabel.textContent = done ? 'All ' + TODAY_COUNT + ' found. New spots at midnight.' : n + ' of ' + TODAY_COUNT + ' found today';
     [].forEach.call(pillDots.children, function (dot, i) { dot.className = i < n ? 'is-on' : ''; });
     pill.classList.toggle('is-done', done);
+    if (reveal) { var t = pillFace.parentNode; t.classList.remove('is-hop'); void t.offsetWidth; t.classList.add('is-hop'); }
     var hidden = false; try { hidden = sessionStorage.getItem(PILL_KEY) === '1'; } catch (e) {}
     if (reveal) { hidden = false; try { sessionStorage.removeItem(PILL_KEY); } catch (e) {} }
     pill.hidden = hidden;
@@ -151,6 +152,7 @@
       e.addEventListener('keydown', function (ev) {
         if (e.tagName !== 'BUTTON' && (ev.key === 'Enter' || ev.key === ' ')) { ev.preventDefault(); collect(e); }
       });
+      e.style.setProperty('--idle-delay', (-(i * 1.3) % 4.8).toFixed(1) + 's');
       if (animate) { e.classList.add('is-pre'); e.style.setProperty('--egg-delay', (2 + (i * 1.9) % 5).toFixed(1) + 's'); }
     });
 
