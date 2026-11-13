@@ -116,7 +116,12 @@
   function faceSrc(who, bgs) {
     var t = SVG[who[0]] && SVG[who[0]].text;
     if (!t) return CDN + who[2];
-    var out = t.replace(/<rect width="50" height="50" rx="18" fill="#[0-9A-Fa-f]{6}"\s*\/>/, '<circle cx="25" cy="25" r="25" fill="' + pickCircle(who[4], bgs) + '"/>');
+    var fill = pickCircle(who[4], bgs), swapped = false;
+    var out = t.replace(/<rect width="([\d.]+)" height="([\d.]+)" rx="[\d.]+" fill="#[0-9A-Fa-f]{6}"\s*\/>/, function (m, w, h) {
+      swapped = true; w = +w; h = +h;
+      return '<circle cx="' + w / 2 + '" cy="' + h / 2 + '" r="' + Math.min(w, h) / 2 + '" fill="' + fill + '"/>';
+    });
+    if (!swapped) return CDN + who[2];
     return 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(out);
   }
   function opaque(c) { var m = c.match(/[\d.]+/g); if (!m || (m.length > 3 && +m[3] < 0.5)) return null; return '#' + m.slice(0, 3).map(function (v) { return ('0' + (+v | 0).toString(16)).slice(-2); }).join(''); }
