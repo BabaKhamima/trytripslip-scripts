@@ -1,4 +1,5 @@
 /* TripSlip hero pile (expressive-layer §7/7a).
+   Home hero (2026-11-13): 12 character faces (ts-face-*.svg, tiles as drawn) in a 5-4-3 stack, slots .is-p1–.is-p12.
    Markup: <div data-ts-pile> containing children with class .ts-pile-face (img or inline svg),
    each positioned by the page's own CSS (the resting pile). The script only animates.
    Optional: a button with [data-ts-pile-pause] toggles idle motion (WCAG 2.2.2).
@@ -11,13 +12,16 @@
   var KEY = 'ts-pile-played';
   var reduce = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
 
+  // Motion uses the individual translate / rotate / scale properties, which compose with each face's resting
+  // transform (the slot tilt set in Webflow, e.g. .is-p3 rotate(-2deg)), so a face keeps its tilt while it drops,
+  // wiggles and bounces instead of snapping straight and back.
   var css =
-    '[data-ts-pile] .ts-pile-face{transform-origin:50% 100%;will-change:transform}' +
-    '@keyframes ts-fall-in{0%{transform:translateY(calc(var(--from,240px)*-1)) rotate(var(--spin,0deg));opacity:0}' +
-    '8%{opacity:1}62%{transform:translateY(0) scale(1.06,.9)}74%{transform:translateY(calc(var(--hop,16px)*-1)) scale(.97,1.04)}' +
-    '88%{transform:translateY(0) scale(1.02,.98)}100%{transform:none;opacity:1}}' +
-    '@keyframes ts-wiggle{0%,100%{transform:rotate(0)}25%{transform:rotate(var(--wig,4deg))}50%{transform:rotate(calc(var(--wig,4deg)*-1))}75%{transform:rotate(calc(var(--wig,4deg)*.5))}}' +
-    '@keyframes ts-bounce{0%,100%{transform:translateY(0)}40%{transform:translateY(-9px)}70%{transform:translateY(0) scale(1.03,.97)}}' +
+    '[data-ts-pile] .ts-pile-face{transform-origin:50% 100%;will-change:translate,rotate,scale}' +
+    '@keyframes ts-fall-in{0%{translate:0 calc(var(--from,240px)*-1);rotate:var(--spin,0deg);opacity:0}' +
+    '8%{opacity:1}62%{translate:0 0;rotate:0deg;scale:1.06 .9}74%{translate:0 calc(var(--hop,16px)*-1);scale:.97 1.04}' +
+    '88%{translate:0 0;scale:1.02 .98}100%{translate:0 0;rotate:0deg;scale:1;opacity:1}}' +
+    '@keyframes ts-wiggle{0%,100%{rotate:0deg}25%{rotate:var(--wig,4deg)}50%{rotate:calc(var(--wig,4deg)*-1)}75%{rotate:calc(var(--wig,4deg)*.5)}}' +
+    '@keyframes ts-bounce{0%,100%{translate:0 0;scale:1}40%{translate:0 -9px}70%{translate:0 0;scale:1.03 .97}}' +
     '[data-ts-pile].is-dropping .ts-pile-face{opacity:0;animation:ts-fall-in 720ms cubic-bezier(.2,.8,.2,1) var(--d,0ms) both}' +
     '[data-ts-pile] .ts-pile-face.is-wiggle{animation:ts-wiggle 1s ease-in-out}' +
     '[data-ts-pile] .ts-pile-face.is-bounce{animation:ts-bounce 700ms cubic-bezier(.2,.8,.2,1)}' +
@@ -48,7 +52,7 @@
   function setup(pile) {
     var faces = [].slice.call(pile.querySelectorAll('.ts-pile-face'));
     if (!faces.length) return;
-    faces.forEach(function (f) { f.setAttribute('aria-hidden', 'true'); });
+    faces.forEach(function (f) { f.setAttribute('aria-hidden', 'true'); if (f.loading === 'lazy') f.loading = 'eager'; });
     if (reduce) return;
 
     // drop-in: bottom row first (largest offsetTop + height lands first)
